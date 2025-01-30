@@ -134,6 +134,7 @@ from app.features.gateway.models import APIKey, UserQuota
 from app.features.usage.models import ResourceUsage
 from app.features.knowledge.models.knowledge import KnowledgeBase
 from app.features.knowledge.models.document import Document, DocumentChunk
+from app.features.flow.model import Flow, FlowVersion
 
 # Add all models that should be included in migrations
 __all__ = [
@@ -153,5 +154,7 @@ __all__ = [
     "ResourceUsage",
     "KnowledgeBase",
     "Document",
-    "DocumentChunk"
+    "DocumentChunk",
+    "Flow",
+    "FlowVersion",
 ]
