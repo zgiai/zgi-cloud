@@ -1,12 +1,15 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { useKnowledgeBase } from "./knowledgeProvider"
 import { getKnowledgeBaseDetail } from "@/services/knowledgeBase"
 import { message } from "antd"
+import { useAppProvider } from "@/app/app-provider"
+import { knowledgeBaseLang } from "@/app/(default)/knowledge-base/lang"
 
 export default function KbHeader({ kbId }: { kbId: string }) {
     const { knowledgeBase, setKnowledgeBase, update } = useKnowledgeBase()
+    const { language } = useAppProvider();
 
     const fetchKbData = async () => {
         const response = await getKnowledgeBaseDetail({ kb_id: kbId });
@@ -14,7 +17,7 @@ export default function KbHeader({ kbId }: { kbId: string }) {
             if (response?.status_code === 200) {
                 setKnowledgeBase(response?.data);
             } else {
-                message.error(response?.status_message || "Failed to fetch knowledge base");
+                message.error(response?.status_message || knowledgeBaseLang[language].failedToFetchKnowledgeBase);
             }
         } catch (error) {
             console.error(error);

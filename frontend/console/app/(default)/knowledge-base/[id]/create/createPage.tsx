@@ -6,6 +6,8 @@ import Tooltip from "@/components/tooltip"
 import type { UploadProps } from 'antd';
 import Link from "next/link"
 import { BASE_URL } from "@/config"
+import { useAppProvider } from "@/app/app-provider"
+import { knowledgeBaseLang } from "@/app/(default)/knowledge-base/lang"
 
 const { Dragger } = Upload;
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
@@ -13,6 +15,7 @@ type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 export default function CreateDocumentPage({ kb_id }: { kb_id: string }) {
     const [token, setToken] = useState('')
     const [pageStatus, setPageStatus] = useState<number>(1)
+    const { language } = useAppProvider();
 
     const uploadDocumentTypeArr: string[] = ['text/plain', 'application/pdf']
 
@@ -39,11 +42,11 @@ export default function CreateDocumentPage({ kb_id }: { kb_id: string }) {
         setChunkRuleErrors(errors);
 
         if (errors.chunk_size || errors.chunk_overlap || errors.separator) {
-            message.error("Please fill in all chunk rule parameters");
+            message.error(knowledgeBaseLang[language].pleaseFillInAllChunkRuleParameters);
             return;
         }
         if (!chunkRule?.chunk_size || !chunkRule?.chunk_overlap || !chunkRule?.separator) {
-            message.error("Chunk rule parameter cannot be empty");
+            message.error(knowledgeBaseLang[language].chunkRuleParameterCannotBeEmpty);
             return;
         }
         const chunk_rule = {
@@ -67,7 +70,7 @@ export default function CreateDocumentPage({ kb_id }: { kb_id: string }) {
                 setPageStatus(3)
                 return
             } else {
-                message.error(res?.status_message || "Failed to upload document");
+                message.error(res?.status_message || knowledgeBaseLang[language].failedToUploadDocument);
                 return
             }
         } catch (error) {
@@ -89,9 +92,9 @@ export default function CreateDocumentPage({ kb_id }: { kb_id: string }) {
                 console.log(info.file, info.fileList);
             }
             if (status === 'done') {
-                message.success(`${info.file.name} file uploaded successfully.`);
+                message.success(`${info.file.name} ${knowledgeBaseLang[language].fileUploadedSuccessfully}.`);
             } else if (status === 'error') {
-                message.error(`${info.file.name} file upload failed.`);
+                message.error(`${info.file.name} ${knowledgeBaseLang[language].fileUploadFailed}.`);
             }
         },
         onDrop(e) {
@@ -106,7 +109,7 @@ export default function CreateDocumentPage({ kb_id }: { kb_id: string }) {
                 setFileList([...fileList, file]);
                 return false;
             } else {
-                message.error(`You can only upload ${uploadDocumentTypeArr.join(', ')} file!`);
+                message.error(`${knowledgeBaseLang[language].youCanOnlyUpload}`);
                 return false;
             }
         },
@@ -135,9 +138,9 @@ export default function CreateDocumentPage({ kb_id }: { kb_id: string }) {
     }
 
     return <div className="flex flex-col px-4 py-4 w-full max-w-[96rem] mx-auto gap-4">
-        <PageStatusProgress pageStatus={pageStatus} setStatus={setPageStatus} />
+        <PageStatusProgress pageStatus={pageStatus} setStatus={setPageStatus} language={language} />
         <div className="flex flex-col gap-4 p-4 border border-gray-200 dark:border-gray-700/60 rounded-lg bg-white dark:bg-gray-800 shadow-sm">
-            {pageStatus === 1 && <h1 className="text-xl md:text-xl text-gray-800 dark:text-gray-100 font-bold" > Upload Document </h1>}
+            {pageStatus === 1 && <h1 className="text-xl md:text-xl text-gray-800 dark:text-gray-100 font-bold" > {knowledgeBaseLang[language].uploadDocument} </h1>}
             <form className="flex flex-col gap-4">
                 <div className={`${pageStatus === 1 ? "" : "hidden"}`}>
                     <Dragger {...props}>
@@ -154,40 +157,40 @@ export default function CreateDocumentPage({ kb_id }: { kb_id: string }) {
                                     </svg>
                                 </span>
                                 <span className="flex justify-center items-center ml-2">
-                                    <span className="font-semibold text-lg">Click or drag file to this area to upload</span>
+                                    <span className="font-semibold text-lg">{knowledgeBaseLang[language].clickOrDragFileToThisAreaToUpload}</span>
                                 </span>
                             </div>
                             <p className="text-gray-500 dark:text-gray-400 mt-2">
-                                Currently support PDF、TXT files, with a maximum size of 10MB per file.
+                                {knowledgeBaseLang[language].currentlySupport} 
                             </p>
                         </div>
                     </Dragger>
                 </div>
                 <div className={`${pageStatus === 2 ? "" : "hidden"}`}>
-                    <h1 className="text-xl md:text-xl text-gray-800 dark:text-gray-100 font-bold" > Chunk Rule Settings </h1>
+                    <h1 className="text-xl md:text-xl text-gray-800 dark:text-gray-100 font-bold" > {knowledgeBaseLang[language].chunkRuleSettings} </h1>
                     <div className="mt-4">
                         <div className="flex items-center gap-1">
                             <label className="block text-lg font-medium mb-1" htmlFor="separators">
-                                Separators
+                                {knowledgeBaseLang[language].separators}
                             </label>
                             <Tooltip className="ml-2" bg="dark" size="md">
                                 <div className="text-sm text-gray-200">
-                                    The separator is used to split the text into vectors. You can use one or more separators. For example, if you want to use both "\n" and "\t" as separators, you can separate them with commas like this: "\n,\t".
+                                    {knowledgeBaseLang[language].separatorDescription}
                                 </div>
                             </Tooltip>
                         </div>
                         <input id="separators" onChange={(e) => setChunkRule({ ...chunkRule, separator: e.target.value })} value={chunkRule?.separator} className={`form-input w-full ${chunkRuleErrors.separator ? 'border-red-500' : ''}`} type="text" />
-                        {chunkRuleErrors.separator && <p className="text-red-500 text-sm mt-1">Please fill in the separator.</p>}
+                        {chunkRuleErrors.separator && <p className="text-red-500 text-sm mt-1">{knowledgeBaseLang[language].pleaseFillInTheSeparator}</p>}
                     </div>
                     <div className={`flex gap-4`}>
                         <div className="mt-4 flex-1">
                             <div className="flex items-center gap-1">
                                 <label className="block text-lg font-medium mb-1" htmlFor="maxChunkSize">
-                                    Max Chunk Size
+                                    {knowledgeBaseLang[language].maxChunkSize}
                                 </label>
                                 <Tooltip className="ml-2" bg="dark" size="md">
                                     <div className="text-sm text-gray-200">
-                                        The maximum size of a chunk in tokens.
+                                        {knowledgeBaseLang[language].maxChunkSizeDescription}
                                     </div>
                                 </Tooltip>
                             </div>
@@ -196,17 +199,17 @@ export default function CreateDocumentPage({ kb_id }: { kb_id: string }) {
                                     <input id="maxChunkSize" className={`form-input w-full ${chunkRuleErrors.chunk_size ? 'border-red-500' : ''}`} onChange={(e) => setChunkRule({ ...chunkRule, chunk_size: parseInt(e.target.value) })} value={chunkRule?.chunk_size} type="number" />
                                     <span className="absolute text-sm right-4 md:right-8 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400">Tokens</span>
                                 </div>
-                                {chunkRuleErrors.chunk_size && <p className="text-red-500 text-sm mt-1">Please fill in the max chunk size.</p>}
+                                {chunkRuleErrors.chunk_size && <p className="text-red-500 text-sm mt-1">{knowledgeBaseLang[language].pleaseFillInTheMaxChunkSize}</p>}
                             </div>
                         </div>
                         <div className="mt-4 flex-1">
                             <div className="flex items-center gap-1">
                                 <label className="block text-lg font-medium mb-1" htmlFor="minChunkSize">
-                                    Chunk Overlap
+                                    {knowledgeBaseLang[language].chunkOverlap}
                                 </label>
                                 <Tooltip className="ml-2" bg="dark" size="md">
                                     <div className="text-sm text-gray-200">
-                                        The overlap between chunks in bytes.Suggest to set it to 1/10-1/4 of the max chunk size.
+                                        {knowledgeBaseLang[language].chunkOverlapDescription}
                                     </div>
                                 </Tooltip>
                             </div>
@@ -215,14 +218,14 @@ export default function CreateDocumentPage({ kb_id }: { kb_id: string }) {
                                     <input id="minChunkSize" className={`form-input w-full ${chunkRuleErrors.chunk_overlap ? 'border-red-500' : ''}`} onChange={(e) => setChunkRule({ ...chunkRule, chunk_overlap: parseInt(e.target.value) })} value={chunkRule?.chunk_overlap} type="number" defaultValue={100} />
                                     <span className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 text-sm">Tokens</span>
                                 </div>
-                                {chunkRuleErrors.chunk_overlap && <p className="text-red-500 text-sm mt-1">Please fill in the chunk overlap.</p>}
+                                {chunkRuleErrors.chunk_overlap && <p className="text-red-500 text-sm mt-1">{knowledgeBaseLang[language].pleaseFillInTheChunkOverlap}</p>}
                             </div>
 
                         </div>
                     </div>
                 </div>
                 <div className={`${pageStatus === 3 ? "" : "hidden"} flex flex-col items-center`}>
-                    <h1 className="text-4xl font-bold text-gray-800 dark:text-gray-100 ">Document uploaded successfully!</h1>
+                    <h1 className="text-4xl font-bold text-gray-800 dark:text-gray-100 ">{knowledgeBaseLang[language].documentUploadedSuccessfully}</h1>
                 </div>
                 <div className={`flex items-center gap-4 mt-8 ${pageStatus === 3 ? "justify-center" : "justify-start"}`}>
                     {(pageStatus === 1 || pageStatus === 2) && <button
@@ -231,19 +234,19 @@ export default function CreateDocumentPage({ kb_id }: { kb_id: string }) {
                         onClick={handleNext}
                         disabled={pageStatus === 1 ? fileList.length === 0 : uploading}
                     >
-                        <span className="">{pageStatus === 1 ? "Next Step" : uploading ? "Uploading..." : "Upload"}</span>
+                        <span className="">{pageStatus === 1 ? knowledgeBaseLang[language].nextStep : uploading ? "Uploading..." : knowledgeBaseLang[language].upload}</span>
                     </button>}
                     {pageStatus !== 3 && <Link
                         className="btn bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700/60 hover:border-gray-300 dark:hover:border-gray-600 text-gray-800 dark:text-gray-300"
                         href={`/knowledge-base/${kb_id}`}
                     >
-                        <span className="">Cancel</span>
+                        <span className="">{knowledgeBaseLang[language].cancel}</span>
                     </Link>}
                     {pageStatus === 3 && <Link
                         className="btn bg-gray-900 text-gray-100 hover:bg-gray-800 dark:bg-gray-100 dark:text-gray-800 dark:hover:bg-white px-10"
                         href={`/knowledge-base/${kb_id}`}
                     >
-                        <span className="">Back</span>
+                        <span className="">{knowledgeBaseLang[language].back}</span>
                     </Link>}
                 </div>
             </form>
@@ -251,7 +254,8 @@ export default function CreateDocumentPage({ kb_id }: { kb_id: string }) {
     </div>
 }
 
-function PageStatusProgress({ pageStatus, setStatus }: { pageStatus: number, setStatus: (status: number) => void }) {
+function PageStatusProgress({ pageStatus, setStatus, language }: { pageStatus: number, setStatus: (status: number) => void, language: 'en' | 'zh' }) {
+
     return (
         <ul className="inline-flex flex-wrap text-sm font-medium">
             <li className="flex items-center">
@@ -263,7 +267,7 @@ function PageStatusProgress({ pageStatus, setStatus }: { pageStatus: number, set
                         }
                     }}
                 >
-                    Upload
+                    {knowledgeBaseLang[language].upload}
                 </button>
                 <svg className="fill-current text-gray-400 dark:text-gray-600 mx-3" width="16" height="16" viewBox="0 0 16 16">
                     <path d="M6.6 13.4L5.2 12l4-4-4-4 1.4-1.4L12 8z" />
@@ -273,7 +277,7 @@ function PageStatusProgress({ pageStatus, setStatus }: { pageStatus: number, set
                 <span
                     className="text-gray-500 dark:text-gray-400 cursor-default"
                 >
-                    Settings
+                    {knowledgeBaseLang[language].chunkRuleSettings}
                 </span>
                 <svg className="fill-current text-gray-400 dark:text-gray-600 mx-3" width="16" height="16" viewBox="0 0 16 16">
                     <path d="M6.6 13.4L5.2 12l4-4-4-4 1.4-1.4L12 8z" />
@@ -281,7 +285,7 @@ function PageStatusProgress({ pageStatus, setStatus }: { pageStatus: number, set
             </li>
             <li className="flex items-center">
                 <span className="text-gray-500 dark:text-gray-400 cursor-default">
-                    Complete
+                    {knowledgeBaseLang[language].complete}
                 </span>
             </li>
         </ul>

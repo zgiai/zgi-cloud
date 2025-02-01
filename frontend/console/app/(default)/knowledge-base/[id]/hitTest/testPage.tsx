@@ -4,6 +4,8 @@ import { useState } from "react";
 import { hitTest } from "@/services/knowledgeBase";
 import { message } from "antd";
 import { SettingModal } from "./settingModal";
+import { useAppProvider } from "@/app/app-provider";
+import { knowledgeBaseLang } from "@/app/(default)/knowledge-base/lang";
 
 interface Chunk {
     id: string;
@@ -20,6 +22,7 @@ export default function Page({ kb_id }: { kb_id: string }) {
     const [currentChunk, setCurrentChunk] = useState<Chunk | null>(null);
     const [isChunksModalOpen, setIsChunksModalOpen] = useState<boolean>(false);
     const [searchFlag, setSearchFlag] = useState<boolean>(false)
+    const { language } = useAppProvider();
 
     const [isLoading, setIsLoading] = useState<boolean>(false)
 
@@ -27,7 +30,7 @@ export default function Page({ kb_id }: { kb_id: string }) {
         setIsLoading(true)
         if (searchText.trim() === '') {
             setIsLoading(false)
-            message.error('Search text cannot be empty')
+            message.error(knowledgeBaseLang[language].searchTextCannotBeEmpty)
             return
         }
         if (!searchFlag) setSearchFlag(true)
@@ -39,7 +42,7 @@ export default function Page({ kb_id }: { kb_id: string }) {
             if (res?.status_code === 200) {
                 setHitResult(res?.data || [])
             } else {
-                message.error(res?.status_message || 'Failed to search')
+                message.error(res?.status_message || knowledgeBaseLang[language].searchFailed)
             }
         } catch (error) {
             console.log(error)
@@ -54,18 +57,18 @@ export default function Page({ kb_id }: { kb_id: string }) {
             <SettingModal isOpen={isChunksModalOpen} setIsOpen={setIsChunksModalOpen} topK={topK} setTopK={setTopK} />
             <div className="w-full h-full min-h-[80vh] flex flex-col">
                 <h1 className="text-2xl text-gray-800 dark:text-gray-100 px-4 font-bold mt-4 flex justify-between">
-                    <span>Hit Test</span>
+                    <span>{knowledgeBaseLang[language].hitTest}</span>
                     <button
                         className="btn bg-gray-900 text-gray-100 hover:bg-gray-800 dark:bg-gray-100 dark:text-gray-800 dark:hover:bg-white disabled:bg-gray-700 disabled:text-gray-100 disabled:hover:bg-gray-600 disabled:hover:text-gray-100"
                         disabled={isLoading}
                         onClick={() => { setIsChunksModalOpen(true) }}
-                    >{"Search Settings"}</button>
+                    >{knowledgeBaseLang[language].searchSetting}</button>
                 </h1>
                 <div className="p-4 flex gap-4 flex-col lg:flex-row w-full h-full flex-1">
                     <div className="flex-[2] h-full">
 
                         <div className="flex flex-col gap-2">
-                            <div>Search Text</div>
+                            <div>{knowledgeBaseLang[language].searchText}</div>
                             <textarea
                                 className="form-input w-full px-2 py-1 min-h-[200px]"
                                 value={searchText}
@@ -76,7 +79,7 @@ export default function Page({ kb_id }: { kb_id: string }) {
                                     className="btn bg-gray-900 text-gray-100 hover:bg-gray-800 dark:bg-gray-100 dark:text-gray-800 dark:hover:bg-white disabled:bg-gray-700 disabled:text-gray-100 disabled:hover:bg-gray-600 disabled:hover:text-gray-100"
                                     disabled={isLoading}
                                     onClick={handleSearch}
-                                >{isLoading ? "Searching..." : "Search"}</button>
+                                >{isLoading ? knowledgeBaseLang[language].searching : knowledgeBaseLang[language].search}</button>
                             </div>
                         </div>
 
@@ -84,13 +87,13 @@ export default function Page({ kb_id }: { kb_id: string }) {
                     <div className="flex-[3] bg-gray-100 h-full rounded-xl w-full flex flex-col px-2 pb-2 gap-2 max-h-[80vh] overflow-y-auto">
                         {!searchFlag && (
                             <div className="w-full h-full flex items-center justify-center text-gray-500 text-xl">
-                                search result will be displayed here
+                                {knowledgeBaseLang[language].searchResultWillBeDisplayedHere}
                             </div>
                         )}
                         {
                             searchFlag && (
                                 <div className="flex items-center p-4">
-                                    Total hits:<span className="font-bold">{isLoading ? "Loading..." : hitResult.length}</span>
+                                    {knowledgeBaseLang[language].totalHits}:<span className="font-bold">{isLoading ? knowledgeBaseLang[language].searching : hitResult.length}</span>
                                 </div>
                             )
                         }

@@ -1,12 +1,14 @@
+import { useAppProvider } from "@/app/app-provider";
 import ModalAction from "@/components/modal-action";
 import { deleteDocument, updateDocument } from "@/services/knowledgeBase";
 import { message } from "antd";
 import { useState, useEffect } from "react";
+import { knowledgeBaseLang } from "@/app/(default)/knowledge-base/lang";
 
 export function UpdateDocumentModal({ isOpen, setIsOpen, currentDocument, getDocumentList }: { isOpen: boolean, setIsOpen: (value: boolean) => void, currentDocument: any, getDocumentList: () => void }) {
     const [documentTitle, setDocumentTitle] = useState(currentDocument?.title || currentDocument?.file_name);
     const [loading, setLoading] = useState(false);
-
+    const { language } = useAppProvider();
     useEffect(() => {
         setDocumentTitle(currentDocument?.title || currentDocument?.file_name);
     }, [currentDocument]);
@@ -18,10 +20,10 @@ export function UpdateDocumentModal({ isOpen, setIsOpen, currentDocument, getDoc
             const res = await updateDocument(currentDocument?.id, { title: documentTitle });
             if (res.status_code === 200) {
                 setIsOpen(false);
-                message.success("Update document success");
+                message.success(knowledgeBaseLang[language].updateDocumentSuccess);
                 getDocumentList();
             } else {
-                message.error(res.status_message || "Update document failed");
+                message.error(res.status_message || knowledgeBaseLang[language].updateDocumentFailed);
             }
         } catch (error) {
             console.error(error);
@@ -31,15 +33,15 @@ export function UpdateDocumentModal({ isOpen, setIsOpen, currentDocument, getDoc
     }
 
     return <ModalAction isOpen={isOpen} setIsOpen={setIsOpen}>
-        <div className="text-lg text-gray-800 dark:text-gray-100 font-bold mb-6">Update Document</div>
+        <div className="text-lg text-gray-800 dark:text-gray-100 font-bold mb-6">{knowledgeBaseLang[language].updateDocument}</div>
         <form onSubmit={handleUpdateDocument} className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
-                <label htmlFor="title" className="text-gray-800 dark:text-gray-100">Document Title</label>
-                <input id="title" className="form-input w-full" placeholder="Document Title" type="text" value={documentTitle} onChange={(e) => setDocumentTitle(e.target.value.trim())} />
+                <label htmlFor="title" className="text-gray-800 dark:text-gray-100">{knowledgeBaseLang[language].documentTitle}</label>
+                <input id="title" className="form-input w-full" placeholder={knowledgeBaseLang[language].documentTitle} type="text" value={documentTitle} onChange={(e) => setDocumentTitle(e.target.value.trim())} />
             </div>
             <div className="flex justify-end gap-4">
-                <button className="btn bg-gray-900 text-gray-100 hover:bg-gray-800 dark:bg-gray-100 dark:text-gray-800 dark:hover:bg-white" type="submit" disabled={loading}>{loading ? "Updating..." : "Update"}</button>
-                <button className="btn bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700/60 hover:border-gray-300 dark:hover:border-gray-600 text-gray-800 dark:text-gray-300" type="button" onClick={() => setIsOpen(false)}>Cancel</button>
+                <button className="btn bg-gray-900 text-gray-100 hover:bg-gray-800 dark:bg-gray-100 dark:text-gray-800 dark:hover:bg-white" type="submit" disabled={loading}>{loading ? knowledgeBaseLang[language].updating : knowledgeBaseLang[language].update}</button>
+                <button className="btn bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700/60 hover:border-gray-300 dark:hover:border-gray-600 text-gray-800 dark:text-gray-300" type="button" onClick={() => setIsOpen(false)}>{knowledgeBaseLang[language].cancel}</button>
             </div>
         </form>
     </ModalAction>
@@ -47,7 +49,7 @@ export function UpdateDocumentModal({ isOpen, setIsOpen, currentDocument, getDoc
 
 export function DeleteDocumentModal({ isOpen, setIsOpen, currentDocument, getDocumentList }: { isOpen: boolean, setIsOpen: (value: boolean) => void, currentDocument: any, getDocumentList: () => void }) {
     const [loading, setLoading] = useState(false);
-
+    const { language } = useAppProvider();
     const handleDeleteDocument = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoading(true);
@@ -55,10 +57,10 @@ export function DeleteDocumentModal({ isOpen, setIsOpen, currentDocument, getDoc
             const res = await deleteDocument(currentDocument?.id);
             if (res.status_code === 200) {
                 setIsOpen(false);
-                message.success("Delete document success");
+                message.success(knowledgeBaseLang[language].deleteDocumentSuccess);
                 getDocumentList();
             } else {
-                message.error(res.status_message || "Delete document failed");
+                message.error(res.status_message || knowledgeBaseLang[language].deleteDocumentFailed);
             }
         } catch (error) {
             console.error(error);
@@ -68,11 +70,11 @@ export function DeleteDocumentModal({ isOpen, setIsOpen, currentDocument, getDoc
     }
 
     return <ModalAction isOpen={isOpen} setIsOpen={setIsOpen}>
-        <div className="text-lg text-gray-800 dark:text-gray-100 font-bold mb-6">Delete Document</div>
-        <div className="text-lg text-gray-800 dark:text-gray-100 mb-6">Are you sure you want to delete this document?</div>
+        <div className="text-lg text-gray-800 dark:text-gray-100 font-bold mb-6">{knowledgeBaseLang[language].deleteDocument}</div>
+        <div className="text-lg text-gray-800 dark:text-gray-100 mb-6">{knowledgeBaseLang[language].areYouSureYouWantToDelete} {currentDocument?.title || currentDocument?.file_name}?</div>
         <form className="flex justify-end gap-4" onSubmit={handleDeleteDocument}>
-            <button className="btn bg-red-500 text-white" type="submit" disabled={loading}>{loading ? "Deleting..." : "Delete"}</button>
-            <button className="btn bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700/60 hover:border-gray-300 dark:hover:border-gray-600 text-gray-800 dark:text-gray-300" type="button" onClick={() => setIsOpen(false)}>Cancel</button>
+            <button className="btn bg-red-500 text-white" type="submit" disabled={loading}>{loading ? knowledgeBaseLang[language].deleting : knowledgeBaseLang[language].delete}</button>
+            <button className="btn bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700/60 hover:border-gray-300 dark:hover:border-gray-600 text-gray-800 dark:text-gray-300" type="button" onClick={() => setIsOpen(false)}>{knowledgeBaseLang[language].cancel}</button>
         </form>
     </ModalAction>
 }

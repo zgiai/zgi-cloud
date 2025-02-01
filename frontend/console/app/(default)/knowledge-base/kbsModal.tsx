@@ -2,8 +2,12 @@ import ModalAction from '@/components/modal-action';
 import { createKnowledgeBase, deleteKnowledgeBase, updateKnowledgeBase } from '@/services/knowledgeBase';
 import { message } from 'antd';
 import { useState,useEffect } from 'react';
+import { useAppProvider } from '@/app/app-provider';
+import { knowledgeBaseLang } from '@/app/(default)/knowledge-base/lang';
+
 
 export const AddKbsModal = ({ isOpen, setIsOpen, getKbsList }: { isOpen: boolean, setIsOpen: (value: boolean) => void, getKbsList: () => void }) => {
+    const { language } = useAppProvider();
     const [formData, setFormData] = useState({
         name: '',
         description: '',
@@ -26,7 +30,7 @@ export const AddKbsModal = ({ isOpen, setIsOpen, getKbsList }: { isOpen: boolean
         setErrors(newErrors);
 
         if (newErrors.name || newErrors.description) {
-            message.error('Please fill in all fields.');
+            message.error(knowledgeBaseLang[language].pleaseFillInAllFields);
             setLoading(false);
             return;
         }
@@ -35,10 +39,10 @@ export const AddKbsModal = ({ isOpen, setIsOpen, getKbsList }: { isOpen: boolean
             const res = await createKnowledgeBase(formData);
             if (res.status_code === 200) {
                 setIsOpen(false);
-                message.success('Add knowledge base entry success');
+                message.success(knowledgeBaseLang[language].addKnowledgeBaseEntrySuccess);
                 getKbsList();
             } else {
-                message.error(res.status_message || 'Add knowledge base entry failed');
+                message.error(res.status_message || knowledgeBaseLang[language].addKnowledgeBaseEntryFailed);
             }
         } catch (error) {
             console.error(error);
@@ -49,10 +53,10 @@ export const AddKbsModal = ({ isOpen, setIsOpen, getKbsList }: { isOpen: boolean
     };
 
     return <ModalAction isOpen={isOpen} setIsOpen={setIsOpen}>
-        <div className="text-lg text-gray-800 dark:text-gray-100 font-bold mb-6">Add Knowledge Base Entry</div>
+        <div className="text-lg text-gray-800 dark:text-gray-100 font-bold mb-6">{knowledgeBaseLang[language].addKnowledgeBaseEntry}</div>
         <form onSubmit={handleAddEntry} className="flex flex-col gap-4">
             <div className="flex flex-row gap-4 items-center flex-wrap text-right">
-                <label className="text-gray-800 dark:text-gray-100 w-24 text-right">Name</label>
+                <label className="text-gray-800 dark:text-gray-100 w-24 text-right">{knowledgeBaseLang[language].name}</label>
                 <input
                     type="text"
                     value={formData.name}
@@ -62,7 +66,7 @@ export const AddKbsModal = ({ isOpen, setIsOpen, getKbsList }: { isOpen: boolean
                 />
             </div>
             <div className="flex flex-row gap-4 items-center flex-wrap text-right">
-                <label className="text-gray-800 dark:text-gray-100 w-24 text-right">Description</label>
+                <label className="text-gray-800 dark:text-gray-100 w-24 text-right">{knowledgeBaseLang[language].description}</label>
                 <input
                     type="text"
                     value={formData.description}
@@ -72,14 +76,15 @@ export const AddKbsModal = ({ isOpen, setIsOpen, getKbsList }: { isOpen: boolean
                 />
             </div>
             <div className="flex justify-end gap-4">
-                <button className="btn bg-gray-900 text-gray-100 hover:bg-gray-800 dark:bg-gray-200 dark:text-gray-800 dark:hover:bg-gray-100" type="submit" disabled={loading}>{loading ? 'Creating...' : 'Create'}</button>
-                <button className="btn bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700/60 hover:border-gray-300 dark:hover:border-gray-600 text-gray-800 dark:text-gray-300" type="button" disabled={loading} onClick={() => setIsOpen(false)}>Cancel</button>
+                <button className="btn bg-gray-900 text-gray-100 hover:bg-gray-800 dark:bg-gray-200 dark:text-gray-800 dark:hover:bg-gray-100" type="submit" disabled={loading}>{loading ? knowledgeBaseLang[language].creating : knowledgeBaseLang[language].create}</button>
+                <button className="btn bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700/60 hover:border-gray-300 dark:hover:border-gray-600 text-gray-800 dark:text-gray-300" type="button" disabled={loading} onClick={() => setIsOpen(false)}>{knowledgeBaseLang[language].cancel}</button>
             </div>
         </form>
     </ModalAction>;
 };
 
 export const DeleteKbsModal = ({ isOpen, setIsOpen, currentEntry, getKbsList }: { isOpen: boolean, setIsOpen: (value: boolean) => void, currentEntry: any, getKbsList: () => void }) => {
+    const { language } = useAppProvider();
     const [loading, setLoading] = useState(false);
 
     const handleDeleteEntry = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -90,10 +95,10 @@ export const DeleteKbsModal = ({ isOpen, setIsOpen, currentEntry, getKbsList }: 
             const res = await deleteKnowledgeBase({ kb_id: currentEntry.id }); // Assuming deleteKbsEntry is defined in your services
             if (res.status_code === 200) {
                 setIsOpen(false);
-                message.success('Delete knowledge base entry success');
+                message.success(knowledgeBaseLang[language].deleteKnowledgeBaseEntrySuccess);
                 getKbsList();
             } else {
-                message.error(res.status_message || 'Delete knowledge base entry failed');
+                message.error(res.status_message || knowledgeBaseLang[language].deleteKnowledgeBaseEntryFailed);
             }
         } catch (error) {
             console.error(error);
@@ -104,16 +109,17 @@ export const DeleteKbsModal = ({ isOpen, setIsOpen, currentEntry, getKbsList }: 
     };
 
     return <ModalAction isOpen={isOpen} setIsOpen={setIsOpen}>
-        <div className="text-lg text-gray-800 dark:text-gray-100 font-bold mb-6">Delete Knowledge Base</div>
-        <div className="text-lg text-gray-800 dark:text-gray-100 mb-6">Are you sure you want to delete {currentEntry?.name || 'this knowledge base'}?</div>
+        <div className="text-lg text-gray-800 dark:text-gray-100 font-bold mb-6">{knowledgeBaseLang[language].deleteKnowledgeBase}</div>
+        <div className="text-lg text-gray-800 dark:text-gray-100 mb-6">{knowledgeBaseLang[language].areYouSureYouWantToDelete} {currentEntry?.name || knowledgeBaseLang[language].thisKnowledgeBase}?</div>
         <form onSubmit={handleDeleteEntry} className="flex justify-end gap-4">
-            <button className="btn bg-red-500 text-white" type="submit" disabled={loading}>{loading ? 'Deleting...' : 'Delete'}</button>
-            <button className="btn bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700/60 hover:border-gray-300 dark:hover:border-gray-600 text-gray-800 dark:text-gray-300" type="button" onClick={() => setIsOpen(false)}>Cancel</button>
+            <button className="btn bg-red-500 text-white" type="submit" disabled={loading}>{loading ? knowledgeBaseLang[language].deleting : knowledgeBaseLang[language].delete}</button>
+            <button className="btn bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700/60 hover:border-gray-300 dark:hover:border-gray-600 text-gray-800 dark:text-gray-300" type="button" onClick={() => setIsOpen(false)}>{knowledgeBaseLang[language].cancel}</button>
         </form>
     </ModalAction>;
 };
 
 export const UpdateKbsModal = ({ isOpen, setIsOpen, currentEntry, getKbsList }: { isOpen: boolean, setIsOpen: (value: boolean) => void, currentEntry: any, getKbsList: () => void }) => {
+    const { language } = useAppProvider();
     const [formData, setFormData] = useState({
         name: currentEntry?.name || '',
         description: currentEntry?.description || '',
@@ -143,7 +149,7 @@ export const UpdateKbsModal = ({ isOpen, setIsOpen, currentEntry, getKbsList }: 
         setErrors(newErrors);
 
         if (newErrors.name || newErrors.description) {
-            message.error('Please fill in all fields.');
+            message.error(knowledgeBaseLang[language].pleaseFillInAllFields);
             setLoading(false);
             return;
         }
@@ -152,10 +158,10 @@ export const UpdateKbsModal = ({ isOpen, setIsOpen, currentEntry, getKbsList }: 
             const res = await updateKnowledgeBase(currentEntry.id, formData);
             if (res.status_code === 200) {
                 setIsOpen(false);
-                message.success('Update knowledge base entry success');
+                message.success(knowledgeBaseLang[language].updateKnowledgeBaseEntrySuccess);
                 getKbsList();
             } else {
-                message.error(res.status_message || 'Update knowledge base entry failed');
+                message.error(res.status_message || knowledgeBaseLang[language].updateKnowledgeBaseEntryFailed);
             }
         } catch (error) {
             console.error(error);
@@ -166,10 +172,10 @@ export const UpdateKbsModal = ({ isOpen, setIsOpen, currentEntry, getKbsList }: 
     };
 
     return <ModalAction isOpen={isOpen} setIsOpen={setIsOpen}>
-        <div className="text-lg text-gray-800 dark:text-gray-100 font-bold mb-6">Update Knowledge Base</div>
+        <div className="text-lg text-gray-800 dark:text-gray-100 font-bold mb-6">{knowledgeBaseLang[language].updateKnowledgeBase}</div>
         <form onSubmit={handleUpdateEntry} className="flex flex-col gap-4">
             <div className="flex flex-row gap-4 items-center flex-wrap text-right">
-                <label className="text-gray-800 dark:text-gray-100 w-24 text-right">Name</label>
+                <label className="text-gray-800 dark:text-gray-100 w-24 text-right">{knowledgeBaseLang[language].name}</label>
                 <input
                     type="text"
                     value={formData.name}
@@ -179,7 +185,7 @@ export const UpdateKbsModal = ({ isOpen, setIsOpen, currentEntry, getKbsList }: 
                 />
             </div>
             <div className="flex flex-row gap-4 items-center flex-wrap text-right">
-                <label className="text-gray-800 dark:text-gray-100 w-24 text-right">Description</label>
+                <label className="text-gray-800 dark:text-gray-100 w-24 text-right">{knowledgeBaseLang[language].description}</label>
                 <input
                     type="text"
                     value={formData.description}
@@ -189,8 +195,8 @@ export const UpdateKbsModal = ({ isOpen, setIsOpen, currentEntry, getKbsList }: 
                 />
             </div>
             <div className="flex justify-end gap-4">
-                <button className="btn bg-gray-900 text-gray-100 hover:bg-gray-800 dark:bg-gray-200 dark:text-gray-800 dark:hover:bg-gray-100" type="submit" disabled={loading}>{loading ? 'Updating...' : 'Update'}</button>
-                <button className="btn bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700/60 hover:border-gray-300 dark:hover:border-gray-600 text-gray-800 dark:text-gray-300" type="button" disabled={loading} onClick={() => setIsOpen(false)}>Cancel</button>
+                <button className="btn bg-gray-900 text-gray-100 hover:bg-gray-800 dark:bg-gray-200 dark:text-gray-800 dark:hover:bg-gray-100" type="submit" disabled={loading}>{loading ? knowledgeBaseLang[language].updating : knowledgeBaseLang[language].update}</button>
+                <button className="btn bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700/60 hover:border-gray-300 dark:hover:border-gray-600 text-gray-800 dark:text-gray-300" type="button" disabled={loading} onClick={() => setIsOpen(false)}>{knowledgeBaseLang[language].cancel}</button>
             </div>
         </form>
     </ModalAction>;

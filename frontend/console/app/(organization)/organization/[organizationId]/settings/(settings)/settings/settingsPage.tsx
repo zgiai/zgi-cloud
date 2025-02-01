@@ -6,6 +6,7 @@ import { message } from "antd"
 import { useParams } from "next/navigation"
 import { DeleteOrganizationModal, EditOrganizationModal, QuitOrganizationModal } from "./settingsModal"
 import { useAppProvider } from "@/app/app-provider";
+import { organizationLang } from "@/app/(organization)/organization/lang"
 
 export default function SettingsPage() {
     const params = useParams()
@@ -13,7 +14,7 @@ export default function SettingsPage() {
 
     const [isAdmin, setIsAdmin] = useState(false);
     const [organizationInfo, setOrganizationInfo] = useState<any>({});
-    const { userInfo } = useAppProvider()
+    const { userInfo, language } = useAppProvider()
 
     const [isDeleteOrgModalOpen, setIsDeleteOrgModalOpen] = useState(false);
     const [isQuitOrgModalOpen, setIsQuitOrgModalOpen] = useState(false);
@@ -25,7 +26,7 @@ export default function SettingsPage() {
             if (res.status_code === 200) {
                 setOrganizationInfo(res?.data);
             } else {
-                message.error(res?.status_message || 'Failed to fetch organization info');
+                message.error(res?.status_message || organizationLang[language].fetchOrganizationInfoFailed);
             }
         } catch (error) {
             console.error('Error fetching organization info:', error);
@@ -52,7 +53,7 @@ export default function SettingsPage() {
         <div className="flex flex-col px-4 py-4 w-full max-w-[96rem] mx-auto gap-4">
             <div className="flex justify-between py-4 border-b border-gray-200 dark:border-gray-700/60 items-center flex-wrap gap-4">
                 <div className="flex-1">
-                    <span className="text-2xl text-gray-800 dark:text-gray-100 font-bold">Organization Settings</span>
+                    <span className="text-2xl text-gray-800 dark:text-gray-100 font-bold">{organizationLang[language].organizationSettings}</span>
                 </div>
             </div>
             <div className="flex flex-col gap-4 p-4 border border-gray-200 dark:border-gray-700/60 rounded-lg bg-white dark:bg-gray-800 shadow-sm">
@@ -72,7 +73,7 @@ export default function SettingsPage() {
                                 setEditOrgModalOpen(true);
                             }}
                         >
-                            Edit
+                            {organizationLang[language].edit}
                         </button>}
                     </div>
                 </div>
@@ -83,7 +84,7 @@ export default function SettingsPage() {
                             setIsQuitOrgModalOpen(true);
                         }}
                     >
-                        Quit Organization
+                        {organizationLang[language].quitOrganization}
                     </button>
                     {isAdmin && <button
                         className={`btn text-white bg-red-500 hover:bg-red-600`}
@@ -91,7 +92,7 @@ export default function SettingsPage() {
                             setIsDeleteOrgModalOpen(true);
                         }}
                     >
-                        Delete Organization
+                        {organizationLang[language].deleteOrganization}
                     </button>}
                 </div>
 

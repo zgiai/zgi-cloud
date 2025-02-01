@@ -6,16 +6,19 @@ import PaginationNumeric from "@/components/pagination-numeric"
 import PaginationClassic from "@/components/pagination-classic"
 import { DeleteMemberModal, SetAdminModal, UnsetAdminModal } from "./membersModal"
 import { message } from "antd"
+import { useAppProvider } from "@/app/app-provider"
+import { organizationLang } from "../../lang"
 
-const roleList = [
-    { label: "All", value: -1, color: "" },
-    { label: "Super Admin", value: 1, color: "text-red-500" },
-    { label: "Admin", value: 2, color: "text-blue-500" },
-    { label: "Member", value: 0, color: "" },
-]
+
 
 export default function MembersPage() {
-
+    const { language } = useAppProvider()
+    const roleList = [
+        { label: organizationLang[language].all, value: -1, color: "" },
+        { label: organizationLang[language].superAdmin, value: 1, color: "text-red-500" },
+        { label: organizationLang[language].admin, value: 2, color: "text-blue-500" },
+        { label: organizationLang[language].member, value: 0, color: "" },
+    ]
     const [memberList, setMemberList] = useState<any[]>([])
     const [totalMember, setTotalMember] = useState(0)
     const [userType, setUserType] = useState(-1)
@@ -81,7 +84,7 @@ export default function MembersPage() {
             <div className="flex-1 p-4">
                 <div className="bg-white dark:bg-gray-800 shadow-sm rounded-xl relative border border-gray-200 dark:border-gray-700/60">
                     <header className="px-5 py-4 flex flex-row justify-between">
-                        <h2 className="font-semibold text-gray-800 dark:text-gray-100">All Members <span className="text-gray-400 dark:text-gray-500 font-medium">{totalMember}</span></h2>
+                        <h2 className="font-semibold text-gray-800 dark:text-gray-100">{organizationLang[language].allMembers} <span className="text-gray-400 dark:text-gray-500 font-medium">{totalMember}</span></h2>
                         <div className="flex flex-col md:flex-row gap-2 md:items-center">
                             <div className="flex flex-row gap-2 items-center">
                                 <select id="country" className="form-select" onChange={(e) => setUserType(Number(e.target.value))} value={userType}>
@@ -108,7 +111,7 @@ export default function MembersPage() {
                                         getMemberListById()
                                     }}
                                 >
-                                    Search
+                                    {organizationLang[language].search}
                                 </button>
                                 <button
                                     className="btn bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700/60 hover:border-gray-300 dark:hover:border-gray-600 text-gray-800 dark:text-gray-300"
@@ -117,7 +120,7 @@ export default function MembersPage() {
                                         getMemberList()
                                     }}
                                 >
-                                    Clear
+                                    {organizationLang[language].clear}
                                 </button>
                             </div>
 
@@ -131,19 +134,19 @@ export default function MembersPage() {
                                 <thead className="text-xs font-semibold uppercase text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-900/20 border-t border-b border-gray-100 dark:border-gray-700/60">
                                     <tr>
                                         <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                                            <div className="font-semibold text-left">ID</div>
+                                            <div className="font-semibold text-left">{organizationLang[language].id}</div>
                                         </th>
                                         <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                                            <div className="font-semibold text-left">Name</div>
+                                            <div className="font-semibold text-left">{organizationLang[language].name}</div>
                                         </th>
                                         <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                                            <div className="font-semibold text-left">Email</div>
+                                            <div className="font-semibold text-left">{organizationLang[language].email}</div>
                                         </th>
                                         <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                                            <div className="font-semibold text-left">Role</div>
+                                            <div className="font-semibold text-left">{organizationLang[language].role}</div>
                                         </th>
                                         <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                                            <div className="font-semibold text-left">Action</div>
+                                            <div className="font-semibold text-left">{organizationLang[language].action}</div>
                                         </th>
                                     </tr>
                                 </thead>
@@ -153,7 +156,7 @@ export default function MembersPage() {
                                         <td colSpan={5} className="text-center py-4">No data</td>
                                     </tr>}
                                     {memberList.map((member: any, index: number) => (
-                                        <MemberTableRow key={index} member={member} setCurrentMember={setCurrentMember} setIsSetAdminOpen={setIsSetAdminOpen} setIsUnsetAdminOpen={setIsUnsetAdminOpen} setIsDeleteMemberOpen={setIsDeleteMemberOpen} />
+                                        <MemberTableRow key={index} member={member} setCurrentMember={setCurrentMember} setIsSetAdminOpen={setIsSetAdminOpen} setIsUnsetAdminOpen={setIsUnsetAdminOpen} setIsDeleteMemberOpen={setIsDeleteMemberOpen} roleList={roleList} />
                                     ))}
                                 </tbody>
                             </table>
@@ -170,8 +173,8 @@ export default function MembersPage() {
         </>)
 }
 
-function MemberTableRow(props: { member: any, setCurrentMember: (member: any) => void, setIsSetAdminOpen: (value: boolean) => void, setIsUnsetAdminOpen: (value: boolean) => void, setIsDeleteMemberOpen: (value: boolean) => void }) {
-    const { member, setCurrentMember, setIsSetAdminOpen, setIsUnsetAdminOpen, setIsDeleteMemberOpen } = props
+function MemberTableRow(props: { member: any, setCurrentMember: (member: any) => void, setIsSetAdminOpen: (value: boolean) => void, setIsUnsetAdminOpen: (value: boolean) => void, setIsDeleteMemberOpen: (value: boolean) => void, roleList: any[] }) {
+    const { member, setCurrentMember, setIsSetAdminOpen, setIsUnsetAdminOpen, setIsDeleteMemberOpen, roleList } = props
     return <tr>
         <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
             <div className="text-left">{member.id}</div>

@@ -8,6 +8,7 @@ import { message } from "antd"
 import { useParams } from "next/navigation"
 import { DeleteMemberModal, UnsetAdminModal, SetAdminModal, AddMemberModal, InviteMemberModal } from "./membersModal"
 import { useAppProvider } from "@/app/app-provider"
+import { organizationLang } from "@/app/(organization)/organization/lang"
 
 const roleList = [
     { label: "All", value: -1, color: "" },
@@ -33,7 +34,7 @@ export default function MembersPage() {
     const [isAdmin, setIsAdmin] = useState(false)
     const [isSuperAdmin, setIsSuperAdmin] = useState(false)
 
-    const { userInfo } = useAppProvider()
+    const { userInfo, language } = useAppProvider()
 
     useEffect(() => {
         getMemberList()
@@ -95,7 +96,7 @@ export default function MembersPage() {
             <div className="flex-1 p-4">
                 <div className="bg-white dark:bg-gray-800 shadow-sm rounded-xl relative border border-gray-200 dark:border-gray-700/60">
                     <header className="px-5 py-4 flex flex-row justify-between">
-                        <h2 className="font-semibold text-gray-800 dark:text-gray-100 flex-nowrap text-nowrap mr-4">All Members <span className="text-gray-400 dark:text-gray-500 font-medium">{totalMember}</span></h2>
+                        <h2 className="font-semibold text-gray-800 dark:text-gray-100 flex-nowrap text-nowrap mr-4">{organizationLang[language].allMembers} <span className="text-gray-400 dark:text-gray-500 font-medium">{totalMember}</span></h2>
                         <div className="flex flex-col md:flex-row gap-2 md:items-center">
                             <div className="flex flex-row gap-2 items-center flex-wrap">
                                 {isAdmin && <button
@@ -105,7 +106,7 @@ export default function MembersPage() {
                                         setIsInviteMemberOpen(true)
                                     }}
                                 >
-                                    Invite Members
+                                    {organizationLang[language].inviteMember}
                                 </button>}
                                 {isAdmin && <button onClick={() => {
                                     setIsAddMemberOpen(true)
@@ -113,7 +114,7 @@ export default function MembersPage() {
                                     <svg className="fill-current text-gray-400 shrink-0" width="16" height="16" viewBox="0 0 16 16">
                                         <path d="M15 7H9V1c0-.6-.4-1-1-1S7 .4 7 1v6H1c-.6 0-1 .4-1 1s.4 1 1 1h6v6c0 .6.4 1 1 1s1-.4 1-1V9h6c.6 0 1-.4 1-1s-.4-1-1-1z" />
                                     </svg>
-                                    <span className="ml-2">Add Members</span>
+                                    <span className="ml-2">{organizationLang[language].addMember}</span>
                                 </button>}
                             </div>
                         </div>
@@ -126,16 +127,16 @@ export default function MembersPage() {
                                 <thead className="text-xs font-semibold uppercase text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-900/20 border-t border-b border-gray-100 dark:border-gray-700/60">
                                     <tr>
                                         <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                                            <div className="font-semibold text-left">ID</div>
+                                            <div className="font-semibold text-left">{organizationLang[language].id}</div>
                                         </th>
                                         <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                                            <div className="font-semibold text-left">Name</div>
+                                            <div className="font-semibold text-left">{organizationLang[language].username}</div>
                                         </th>
                                         <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                                            <div className="font-semibold text-left">Role</div>
+                                            <div className="font-semibold text-left">{organizationLang[language].role}</div>
                                         </th>
                                         <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                                            <div className="font-semibold text-left">Action</div>
+                                            <div className="font-semibold text-left">{organizationLang[language].action}</div>
                                         </th>
                                     </tr>
                                 </thead>

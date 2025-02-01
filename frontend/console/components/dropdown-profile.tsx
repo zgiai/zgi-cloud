@@ -5,11 +5,13 @@ import Image from 'next/image'
 import { Menu, MenuButton, MenuItems, MenuItem, Transition } from '@headlessui/react'
 import UserAvatar from '@/public/images/user-avatar-32.png'
 
-const userTypeArray = ['User','Super Admin', 'Admin']
 
-export default function DropdownProfile({ align, userInfo = {} }: {
+
+export default function DropdownProfile({ align, userInfo = {}, userTypeArray = [], headerLang={} }: {
   align?: 'left' | 'right'
   userInfo?: any
+  userTypeArray?: string[]
+  headerLang?: any
 }) {
   return (
     <Menu as="div" className="relative inline-flex">
@@ -54,7 +56,7 @@ export default function DropdownProfile({ align, userInfo = {} }: {
                   window.location.href = '/signin'
                 }}
               >
-                Sign Out
+                {headerLang?.signOut || "Sign Out"}
               </button>
             )}
           </MenuItem>

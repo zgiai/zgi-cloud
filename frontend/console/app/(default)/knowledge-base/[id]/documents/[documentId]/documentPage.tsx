@@ -8,6 +8,9 @@ import PaginationClassic from "@/components/pagination-classic";
 import PaginationLibrary from "@/app/(alternative)/components-library/pagination/page";
 import PaginationNumeric from "@/components/pagination-numeric";
 import ChunksModal from "./chunksModal";
+import { useAppProvider } from "@/app/app-provider";
+import { knowledgeBaseLang } from "@/app/(default)/knowledge-base/lang";
+
 
 interface Document {
     id?: number;
@@ -61,6 +64,7 @@ export default function DocumentPage({ kbId, documentId }: { kbId: string, docum
     const [isChunksModalOpen, setIsChunksModalOpen] = useState<boolean>(false);
     const [currentChunk, setCurrentChunk] = useState<Chunk | null>(null);
     const [searchQuery, setSearchQuery] = useState<string>("");
+    const { language } = useAppProvider();
 
     const pageSize = 10;
 
@@ -70,7 +74,7 @@ export default function DocumentPage({ kbId, documentId }: { kbId: string, docum
             if (res?.status_code === 200) {
                 setDocument(res?.data || {});
             } else {
-                message.error(res?.status_message || "Failed to fetch document");
+                message.error(res?.status_message || knowledgeBaseLang[language].fetchDocumentFailed);
             }
         } catch (err) {
             console.error(err)
@@ -88,7 +92,7 @@ export default function DocumentPage({ kbId, documentId }: { kbId: string, docum
                 setChunkList(res?.data?.items || []);
                 setTotal(res?.data?.total || 0);
             } else {
-                message.error(res?.status_message || "Failed to fetch chunk list");
+                message.error(res?.status_message || knowledgeBaseLang[language].fetchChunkListFailed);
             }
         } catch (err) {
             console.error(err)
@@ -97,17 +101,17 @@ export default function DocumentPage({ kbId, documentId }: { kbId: string, docum
 
     const saveChunk = async (content: string) => {
         if (!currentChunk){
-            message.error("Please select a chunk");
+            message.error(knowledgeBaseLang[language].pleaseSelectAChunk);
             return false
         }
         try {
             const res = await updateChunk(currentChunk?.id, { content })
             if (res?.status_code === 200) {
-                message.success("Update chunk success");
+                message.success(knowledgeBaseLang[language].updateChunkSuccess);
                 fetchChunkList();
                 return true
             } else {
-                message.error(res?.status_message || "Failed to update chunk");
+                message.error(res?.status_message || knowledgeBaseLang[language].updateChunkFailed);
                 return false
             }
         } catch (err) {
@@ -133,55 +137,55 @@ export default function DocumentPage({ kbId, documentId }: { kbId: string, docum
             <div className={`grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-4 p-4 ${documentInfoOpen ? 'hidden' : 'grid'}`}>
                 <div className="flex-1 flex flex-col h-full">
                     <div className="flex items-center">
-                        <span className="text-sm text-gray-800 dark:text-gray-200 flex-1 font-bold">File Name </span>
+                        <span className="text-sm text-gray-800 dark:text-gray-200 flex-1 font-bold">{knowledgeBaseLang[language].fileName} </span>
                         <span className="text-sm text-gray-600 dark:text-gray-400 w-40 break-all">{document?.file_name}</span>
                     </div>
                 </div>
                 <div className="flex-1 flex flex-col h-full">
                     <div className="flex items-center h-full">
-                        <span className="text-sm text-gray-800 dark:text-gray-200 flex-1 font-bold">File Type </span>
+                        <span className="text-sm text-gray-800 dark:text-gray-200 flex-1 font-bold">{knowledgeBaseLang[language].fileType} </span>
                         <span className="text-sm text-gray-600 dark:text-gray-400 w-40">{document?.file_type}</span>
                     </div>
                 </div>
                 <div className="flex-1 flex flex-col h-full">
                     <div className="flex items-center h-full">
-                        <span className="text-sm text-gray-800 dark:text-gray-200 flex-1 font-bold">File Size </span>
+                        <span className="text-sm text-gray-800 dark:text-gray-200 flex-1 font-bold">{knowledgeBaseLang[language].fileSize} </span>
                         <span className="text-sm text-gray-600 dark:text-gray-400 w-40">{formatBytes(document?.file_size || 0)}</span>
                     </div>
                 </div>
                 <div className="flex-1 flex flex-col h-full">
                     <div className="flex items-center h-full">
-                        <span className="text-sm text-gray-800 dark:text-gray-200 flex-1 font-bold">Create At </span>
+                        <span className="text-sm text-gray-800 dark:text-gray-200 flex-1 font-bold">{knowledgeBaseLang[language].createdAt} </span>
                         <span className="text-sm text-gray-600 dark:text-gray-400 w-40">{document?.created_at ? new Intl.DateTimeFormat('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(new Date(document?.created_at)) : ""}</span>
                     </div>
                 </div>
                 <div className="flex-1 flex flex-col h-full">
                     <div className="flex items-center h-full">
-                        <span className="text-sm text-gray-800 dark:text-gray-200 flex-1 font-bold">Last Update At </span>
+                        <span className="text-sm text-gray-800 dark:text-gray-200 flex-1 font-bold">{knowledgeBaseLang[language].lastUpdateAt} </span>
                         <span className="text-sm text-gray-600 dark:text-gray-400 w-40">{document?.updated_at ? new Intl.DateTimeFormat('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(new Date(document?.updated_at)) : ""}</span>
                     </div>
                 </div>
                 <div className="flex-1 flex flex-col h-full">
                     <div className="flex items-center h-full">
-                        <span className="text-sm text-gray-800 dark:text-gray-200 flex-1 font-bold">File Hash </span>
+                        <span className="text-sm text-gray-800 dark:text-gray-200 flex-1 font-bold">{knowledgeBaseLang[language].fileHash} </span>
                         <span className="text-sm text-gray-600 dark:text-gray-400 w-40 break-all">{document?.file_hash}</span>
                     </div>
                 </div>
                 <div className="flex-1 flex flex-col h-full">
                     <div className="flex items-center h-full">
-                        <span className="text-sm text-gray-800 dark:text-gray-200 flex-1 font-bold">Chunk Size </span>
+                        <span className="text-sm text-gray-800 dark:text-gray-200 flex-1 font-bold">{knowledgeBaseLang[language].chunkSize} </span>
                         <span className="text-sm text-gray-600 dark:text-gray-400 w-40">{document?.chunk_size}</span>
                     </div>
                 </div>
                 <div className="flex-1 flex flex-col h-full">
                     <div className="flex items-center h-full">
-                        <span className="text-sm text-gray-800 dark:text-gray-200 flex-1 font-bold">Chunk Overlap </span>
+                        <span className="text-sm text-gray-800 dark:text-gray-200 flex-1 font-bold">{knowledgeBaseLang[language].chunkOverlap} </span>
                         <span className="text-sm text-gray-600 dark:text-gray-400 w-40">{document?.chunk_overlap}</span>
                     </div>
                 </div>
                 <div className="flex-1 flex flex-col h-full">
                     <div className="flex items-center h-full">
-                        <span className="text-sm text-gray-800 dark:text-gray-200 flex-1 font-bold">Chunk Count </span>
+                        <span className="text-sm text-gray-800 dark:text-gray-200 flex-1 font-bold">{knowledgeBaseLang[language].chunkCount} </span>
                         <span className="text-sm text-gray-600 dark:text-gray-400 w-40">{document?.chunk_count}</span>
                     </div>
                 </div>
@@ -225,18 +229,18 @@ function ChunkListComponent({
     chunkList: Chunk[], total: number, setCurrentChunk: (chunk: Chunk) => void, setIsChunksModalOpen: (isOpen: boolean) => void, searchQuery: string, setSearchQuery: (query: string) => void, fetchChunkList: () => void, currentPage: number, setCurrentPage: (page: number) => void
 }) {
     const [showMore, setShowMore] = useState<boolean>(false);
-
+    const { language } = useAppProvider();
     return <div>
         <h1 className=" font-bold px-4 py-4 text-gray-900 dark:text-gray-100 flex items-center justify-between">
             <div>
-                <span className="text-gray-800 dark:text-gray-200 mr-2 text-2xl">All Chunks</span>
+                <span className="text-gray-800 dark:text-gray-200 mr-2 text-2xl">{knowledgeBaseLang[language].allChunks}</span>
                 <span className="text-gray-600 dark:text-gray-400 text-lg">{total}</span>
             </div>
             <div className="flex items-center gap-x-2">
                 <input
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search chunks"
+                    placeholder={knowledgeBaseLang[language].search}
                     className="form-input font-normal"
                     onKeyDown={(e) => {
                         if (e.key === 'Enter') {
@@ -252,7 +256,7 @@ function ChunkListComponent({
                     className="btn bg-gray-900 text-gray-100 hover:bg-gray-800 dark:bg-gray-100 dark:text-gray-800 dark:hover:bg-white"
                     onClick={() => setShowMore(!showMore)}
                 >
-                    <span className="hidden sm:inline">View All</span>
+                    <span className="hidden sm:inline">{knowledgeBaseLang[language].viewAll}</span>
                 </button>
             </div>
         </h1>

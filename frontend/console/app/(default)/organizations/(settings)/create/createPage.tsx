@@ -5,8 +5,11 @@ import { CreateOrganizationParams } from "@/interfaces/request"
 import { createOrganization } from "@/services/organization"
 import { message } from "antd"
 import Link from "next/link"
+import { organizationLang } from "../../lang"
+import { useAppProvider } from "@/app/app-provider"
 
 export default function CreateOrganizationPage() {
+    const { language } = useAppProvider()
     const [pageStatus, setPageStatus] = useState<number>(1)
     const [formData, setFormData] = useState<CreateOrganizationParams>({
         name: "",
@@ -20,22 +23,22 @@ export default function CreateOrganizationPage() {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         if ((formData?.project?.name || "").length < 3) {
-            message.error("Project name must be at least 3 characters")
+            message.error(organizationLang[language].projectNameMustBeAtLeast3Characters)
             return
         } else {
             const response = await createOrganization(formData)
             if (response?.status_code === 200) {
-                message.success("Organization created successfully")
+                message.success(organizationLang[language].createOrganizationSuccess)
                 window.location.href = '/organizations'
             } else {
-                message.error(response?.status_message || "Failed to create organization")
+                message.error(response?.status_message || organizationLang[language].createOrganizationFailed)
             }
         }
     }
 
     const handleNext = () => {
         if (formData.name.length < 3) {
-            message.error("Organization name must be at least 3 characters")
+            message.error(organizationLang[language].organizationNameMustBeAtLeast3Characters)
             return
         } else {
             setPageStatus(2)
@@ -45,7 +48,7 @@ export default function CreateOrganizationPage() {
     return <div className="flex flex-col px-4 py-4 w-full mx-auto">
         <div className="flex justify-between border-b py-4 border-gray-200 dark:border-gray-700/60 items-center flex-wrap gap-4">
             <div className="flex-1">
-                <span className="text-2xl text-gray-800 dark:text-gray-100 font-bold">Create Organization</span>
+                <span className="text-2xl text-gray-800 dark:text-gray-100 font-bold">{organizationLang[language].create}</span>
             </div>
         </div>
         <CreateProgress step={pageStatus} setStep={setPageStatus} />
@@ -53,17 +56,17 @@ export default function CreateOrganizationPage() {
             <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
                 <div className={`flex-col gap-4 ${pageStatus === 1 ? "flex" : "hidden"}`}>
                     <div>
-                        <label htmlFor="name" className="text-gray-800 dark:text-gray-100 font-bold">Name</label>
+                        <label htmlFor="name" className="text-gray-800 dark:text-gray-100 font-bold">{organizationLang[language].name}</label>
                         <input id="name" className="form-input w-full" placeholder="my-organization" type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value.trim() })} />
                     </div>
                     <div>
-                        <label htmlFor="description" className="text-gray-800 dark:text-gray-100 font-bold">Description</label>
+                        <label htmlFor="description" className="text-gray-800 dark:text-gray-100 font-bold">{organizationLang[language].description}</label>
                         <textarea id="description" className="form-textarea w-full min-h-[100px]" placeholder="my-organization-description" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value.trim() })} />
                     </div>
                 </div>
                 <div className={`flex-col gap-4 ${pageStatus === 2 ? "flex" : "hidden"}`}>
                     <div>
-                        <label htmlFor="name" className="text-gray-800 dark:text-gray-100 font-bold">Name</label>
+                        <label htmlFor="name" className="text-gray-800 dark:text-gray-100 font-bold">{organizationLang[language].name}</label>
                         <input
                             id="name"
                             className="form-input w-full"
@@ -74,7 +77,7 @@ export default function CreateOrganizationPage() {
                         />
                     </div>
                     <div>
-                        <label htmlFor="description" className="text-gray-800 dark:text-gray-100 font-bold">Description</label>
+                        <label htmlFor="description" className="text-gray-800 dark:text-gray-100 font-bold">{organizationLang[language].description}</label>
                         <textarea
                             id="description"
                             className="form-textarea w-full min-h-[100px]"
@@ -90,19 +93,19 @@ export default function CreateOrganizationPage() {
                         onClick={handleNext}
                         type="button"
                     >
-                        <span className="">Next</span>
+                        <span className="">{organizationLang[language].next}</span>
                     </button>}
                     {pageStatus === 2 && <button
                         className="btn bg-gray-900 text-gray-100 hover:bg-gray-800 dark:bg-gray-100 dark:text-gray-800 dark:hover:bg-white"
                         type="submit"
                     >
-                        <span className="">Create</span>
+                        <span className="">{organizationLang[language].create}</span>
                     </button>}
                     <Link
                         className="btn bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700/60 hover:border-gray-300 dark:hover:border-gray-600 text-gray-800 dark:text-gray-300"
                         href="/organizations"
                     >
-                        <span className="">Cancel</span>
+                        <span className="">{organizationLang[language].cancel}</span>
                     </Link>
                 </div>
             </form>
@@ -111,6 +114,7 @@ export default function CreateOrganizationPage() {
 }
 
 function CreateProgress({ step = 1, setStep = () => { } }: { step?: number, setStep?: (step: number) => void }) {
+    const { language } = useAppProvider()
     return <div className="py-4">
         <div className="flex flex-row items-center flex-wrap">
             <div className="flex flex-row items-center">
@@ -119,7 +123,7 @@ function CreateProgress({ step = 1, setStep = () => { } }: { step?: number, setS
                     type="button"
                     onClick={() => {setStep(1)}}
                 >
-                    Create Organization
+                    {organizationLang[language].create}
                 </button>
             </div>
             <div className="text-gray-800 dark:text-gray-100">
@@ -128,7 +132,7 @@ function CreateProgress({ step = 1, setStep = () => { } }: { step?: number, setS
                 </svg>
             </div>
             <div className="flex flex-row gap-2 items-center">
-                <span className={`${step === 2 ? "text-gray-800 dark:text-gray-100 font-bold" : "text-gray-500 dark:text-gray-400"}`}>Create Project</span>
+                <span className={`${step === 2 ? "text-gray-800 dark:text-gray-100 font-bold" : "text-gray-500 dark:text-gray-400"}`}>{organizationLang[language].newProject}</span>
             </div>
         </div>
     </div>

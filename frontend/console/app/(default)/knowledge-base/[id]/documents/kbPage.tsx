@@ -7,6 +7,8 @@ import Link from "next/link";
 import { formatBytes } from "@/utils/common";
 import { DeleteDocumentModal, UpdateDocumentModal } from "./documentsModal";
 import { useRouter } from "next/navigation";
+import { knowledgeBaseLang } from "../../lang";
+import { useAppProvider } from "@/app/app-provider";
 
 interface Document {
     id: number;
@@ -61,6 +63,7 @@ export default function KBPage({ id }: { id: string }) {
     const [currentDocument, setCurrentDocument] = useState<Document | null>(null);
     const [search, setSearch] = useState("");
     const [documentType, setDocumentType] = useState("");
+    const { language } = useAppProvider();
     // const [status, setStatus] = useState("");
 
     const fetchDocumentList = async () => {
@@ -90,11 +93,11 @@ export default function KBPage({ id }: { id: string }) {
         <UpdateDocumentModal isOpen={isUpdateOpen} setIsOpen={setIsUpdateOpen} currentDocument={currentDocument} getDocumentList={fetchDocumentList} />
         <header className="px-5 py-4 flex flex-col md:flex-row justify-between gap-2">
             <h2 className="font-semibold text-gray-800 dark:text-gray-100 flex-nowrap text-nowrap mr-4">
-                All Documents <span className="text-gray-400 dark:text-gray-500 font-medium ml-2">{total}</span>
+                {knowledgeBaseLang[language].allDocuments} <span className="text-gray-400 dark:text-gray-500 font-medium ml-2">{total}</span>
             </h2>
             <div className="flex flex-col items-start md:flex-row gap-2 md:items-center">
                 <div className="flex flex-col md:flex-row gap-2 md:items-center flex-wrap">
-                    <input className="form-input " type="text" placeholder="Search" 
+                    <input className="form-input " type="text" placeholder={knowledgeBaseLang[language].search} 
                     onChange={(e) => setSearch(e.target.value)} 
                     onKeyDown={(e) => {
                             if (e.key === 'Enter') {
@@ -105,7 +108,7 @@ export default function KBPage({ id }: { id: string }) {
                         className="form-select"
                         onChange={(e) => setDocumentType(e.target.value)}
                     >
-                        <option value="">All</option>
+                        <option value="">{knowledgeBaseLang[language].all}</option>
                         <option value="pdf">PDF</option>
                         <option value="txt">TXT</option>
                     </select>
@@ -122,7 +125,7 @@ export default function KBPage({ id }: { id: string }) {
                         <svg className="fill-current text-gray-400 shrink-0" width="16" height="16" viewBox="0 0 16 16">
                             <path d="M15 7H9V1c0-.6-.4-1-1-1S7 .4 7 1v6H1c-.6 0-1 .4-1 1s.4 1 1 1h6v6c0 .6.4 1 1 1s1-.4 1-1V9h6c.6 0 1-.4 1-1s-.4-1-1-1z" />
                         </svg>
-                        <span className="ml-2">Add Document</span>
+                        <span className="ml-2">{knowledgeBaseLang[language].addDocument}</span>
                     </Link>
                 </div>
             </div>
@@ -133,32 +136,32 @@ export default function KBPage({ id }: { id: string }) {
                 <thead className="text-xs font-semibold uppercase text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-900/20 border-t border-b border-gray-100 dark:border-gray-700/60">
                     <tr>
                         <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                            <div className="font-semibold text-left">ID</div>
+                            <div className="font-semibold text-left">{knowledgeBaseLang[language].id}</div>
                         </th>
                         <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                            <div className="font-semibold text-left">Name</div>
+                            <div className="font-semibold text-left">{knowledgeBaseLang[language].name}</div>
                         </th>
                         <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                            <div className="font-semibold text-left">Type</div>
+                            <div className="font-semibold text-left">{knowledgeBaseLang[language].type}</div>
                         </th>
                         <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                            <div className="font-semibold text-left">Size</div>
+                            <div className="font-semibold text-left">{knowledgeBaseLang[language].size}</div>
                         </th>
                         <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                            <div className="font-semibold text-left">Uploaded-At</div>
+                            <div className="font-semibold text-left">{knowledgeBaseLang[language].uploadedAt}</div>
                         </th>
                         <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                            <div className="font-semibold text-left">Status</div>
+                            <div className="font-semibold text-left">{knowledgeBaseLang[language].status}</div>
                         </th>
                         <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                            <div className="font-semibold text-left">Action</div>
+                            <div className="font-semibold text-left">{knowledgeBaseLang[language].action}</div>
                         </th>
                     </tr>
                 </thead>
                 {/* Table body */}
                 <tbody className="text-sm divide-y divide-gray-100 dark:divide-gray-700/60">
                     {documentList.length === 0 && <tr>
-                        <td colSpan={5} className="text-center py-4">No data</td>
+                        <td colSpan={5} className="text-center py-4">{knowledgeBaseLang[language].noData}</td>
                     </tr>}
                     {documentList.map((document: any, index: number) => (
                         <DocumentTableRow key={index} document={document} setIsDeleteOpen={setIsDeleteOpen} setIsUpdateOpen={setIsUpdateOpen} setCurrentDocument={setCurrentDocument} id={id} />

@@ -4,6 +4,9 @@ import ModalAction from "@/components/modal-action";
 import { deleteProject, updateProject } from "@/services/project";
 import { message } from "antd";
 import { useState, useEffect } from "react";
+import { useAppProvider } from "@/app/app-provider";
+import { projectLang } from "@/app/(project)/project/lang";
+
 
 export const DeleteProjectModal = ({
     isOpen, setIsOpen, projectId
@@ -11,6 +14,7 @@ export const DeleteProjectModal = ({
     isOpen: boolean, setIsOpen: (value: boolean) => void, projectId: string
 }) => {
     const [loading, setLoading] = useState(false);
+    const { language } = useAppProvider();
     const handleDeleteOrg = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoading(true);
@@ -31,11 +35,11 @@ export const DeleteProjectModal = ({
     }
 
     return <ModalAction isOpen={isOpen} setIsOpen={setIsOpen}>
-        <div className="text-lg text-gray-800 dark:text-gray-100 font-bold mb-6">Delete Project</div>
-        <div className="text-lg text-gray-800 dark:text-gray-100 mb-6">Are you sure you want to delete this project?</div>
+        <div className="text-lg text-gray-800 dark:text-gray-100 font-bold mb-6">{projectLang[language].deleteProject}</div>
+        <div className="text-lg text-gray-800 dark:text-gray-100 mb-6">{projectLang[language].deleteProjectConfirmation}</div>
         <form onSubmit={handleDeleteOrg} className="flex justify-end gap-4">
-            <button className="btn bg-red-500 text-white" type="submit" disabled={loading}>{loading ? "Deleting..." : "Delete"} </button>
-            <button className="btn bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700/60 hover:border-gray-300 dark:hover:border-gray-600 text-gray-800 dark:text-gray-300" type="button" onClick={() => setIsOpen(false)}>Cancel</button>
+            <button className="btn bg-red-500 text-white" type="submit" disabled={loading}>{loading ? projectLang[language].deleting : projectLang[language].delete} </button>
+            <button className="btn bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700/60 hover:border-gray-300 dark:hover:border-gray-600 text-gray-800 dark:text-gray-300" type="button" onClick={() => setIsOpen(false)}>{projectLang[language].cancel}</button>
         </form>
     </ModalAction>;
 };
@@ -45,6 +49,7 @@ export const EditProjectModal = ({
 }: {
     isOpen: boolean, setIsOpen: (value: boolean) => void, projuctId: string, projectInfo: any, isAdmin: boolean
 }) => {
+    const { language } = useAppProvider();
     const [loading, setLoading] = useState(false);
     const [active, setActive] = useState(true);
     const [formData, setFormData] = useState({
@@ -69,10 +74,10 @@ export const EditProjectModal = ({
             const res = await updateProject({ project_id: projuctId }, {...formData,status: active ? 'active' : 'disabled'});
             if (res.status_code === 200) {
                 setIsOpen(false);
-                message.success("Edit project success");
+                message.success(projectLang[language].editProjectSuccess);
                 location.href = "/organizations";
             } else {
-                message.error(res.status_message || "Edit project failed");
+                message.error(res.status_message || projectLang[language].editProjectFailed);
             }
         } catch (error) {
             console.error(error);
@@ -82,10 +87,10 @@ export const EditProjectModal = ({
     }
 
     return <ModalAction isOpen={isOpen} setIsOpen={setIsOpen}>
-        <div className="text-lg text-gray-800 dark:text-gray-100 font-bold mb-6">Edit Project</div>
+        <div className="text-lg text-gray-800 dark:text-gray-100 font-bold mb-6">{projectLang[language].editProject}</div>
         <form onSubmit={handleDeleteOrg} className="flex gap-4 flex-col">
             <div className="flex flex-row gap-4 items-center flex-wrap">
-                <label className="text-gray-800 dark:text-gray-100 w-24 text-right">Name</label>
+                <label className="text-gray-800 dark:text-gray-100 w-24 text-right">{projectLang[language].name}</label>
                 <input
                     type="text"
                     placeholder="My orgnization"
@@ -95,7 +100,7 @@ export const EditProjectModal = ({
                 />
             </div>
             <div className="flex flex-row gap-4 items-center flex-wrap text-right">
-                <label className="text-gray-800 dark:text-gray-100 w-24">Description</label>
+                <label className="text-gray-800 dark:text-gray-100 w-24">{projectLang[language].description}</label>
                 <input
                     type="text"
                     placeholder="My orgnization"
@@ -105,7 +110,7 @@ export const EditProjectModal = ({
                 />
             </div>
             {isAdmin && <div className="flex flex-row gap-4 items-center flex-wrap text-right">
-                <label className="text-gray-800 dark:text-gray-100 w-24">Status</label>
+                <label className="text-gray-800 dark:text-gray-100 w-24">{projectLang[language].status}</label>
                 <div className="flex flex-row gap-4 items-center">
                     <div className="flex items-center">
                         <div className="form-switch">
@@ -115,13 +120,13 @@ export const EditProjectModal = ({
                                 <span className="sr-only">Switch label</span>
                             </label>
                         </div>
-                        <div className="text-sm text-gray-400 dark:text-gray-500 italic ml-2">{active ? 'active' : 'disabled'}</div>
+                        <div className="text-sm text-gray-400 dark:text-gray-500 italic ml-2">{active ? projectLang[language].active : projectLang[language].disabled}</div>
                     </div>
                 </div>
             </div>}
             <div className="flex flex-row gap-4 items-center justify-end">
-                <button className="btn bg-gray-900 text-gray-100 hover:bg-gray-800 dark:bg-gray-100 dark:text-gray-800 dark:hover:bg-white" type="submit" disabled={loading}>{loading ? "Saving..." : "Save"} </button>
-                <button className="btn bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700/60 hover:border-gray-300 dark:hover:border-gray-600 text-gray-800 dark:text-gray-300" type="button" onClick={() => setIsOpen(false)}>Cancel</button>
+                <button className="btn bg-gray-900 text-gray-100 hover:bg-gray-800 dark:bg-gray-100 dark:text-gray-800 dark:hover:bg-white" type="submit" disabled={loading}>{loading ? projectLang[language].saving : projectLang[language].save} </button>
+                <button className="btn bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700/60 hover:border-gray-300 dark:hover:border-gray-600 text-gray-800 dark:text-gray-300" type="button" onClick={() => setIsOpen(false)}>{projectLang[language].cancel}</button>
             </div>
         </form>
     </ModalAction>

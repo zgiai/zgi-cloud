@@ -6,7 +6,9 @@ import { getApiKeyList } from "@/services/apikey";
 import { message } from "antd";
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
+import { useAppProvider } from "@/app/app-provider";
 import { DeleteApiKeyModal, UpdateApiKeyModal, DisableApiKeyModal, EnableApiKeyModal, CreateApiKeyModal } from "./apikeyModal";
+import { projectLang } from "@/app/(project)/project/lang";
 
 export default function ApiKeyPage() {
     const params = useParams();
@@ -20,6 +22,7 @@ export default function ApiKeyPage() {
     const [isOpenDisableApiKeyModal, setIsOpenDisableApiKeyModal] = useState<boolean>(false);
     const [isOpenEnableApiKeyModal, setIsOpenEnableApiKeyModal] = useState<boolean>(false);
     const [currentApiKey, setCurrentApiKey] = useState<any>({});
+    const { language } = useAppProvider();
 
     useEffect(() => {
         getApiKeyListData();
@@ -32,7 +35,7 @@ export default function ApiKeyPage() {
                 setApiKeyList(res?.data?.api_keys);
                 setTotalApiKey(res?.data?.total);
             } else {
-                message.error(res?.message || "Failed to get api key list");
+                message.error(res?.message || projectLang[language].getApiKeyListFailed);
             }
         } catch (error) {
             console.error(error);
@@ -63,12 +66,12 @@ export default function ApiKeyPage() {
                     <svg className="fill-current text-gray-400 shrink-0" width="16" height="16" viewBox="0 0 16 16">
                         <path d="M15 7H9V1c0-.6-.4-1-1-1S7 .4 7 1v6H1c-.6 0-1 .4-1 1s.4 1 1 1h6v6c0 .6.4 1 1 1s1-.4 1-1V9h6c.6 0 1-.4 1-1s-.4-1-1-1z" />
                     </svg>
-                    <span className="ml-2">Create</span>
+                    <span className="ml-2">{projectLang[language].createApiKey}</span>
                 </button>
             </div>
             <div className="bg-white dark:bg-gray-800 shadow-sm rounded-xl relative">
                 <header className="px-5 py-4">
-                    <h2 className="font-semibold text-gray-800 dark:text-gray-100">All Api Keys <span className="text-gray-400 dark:text-gray-500 font-medium">{totalApiKey}</span></h2>
+                    <h2 className="font-semibold text-gray-800 dark:text-gray-100">{projectLang[language].allApiKeys} <span className="text-gray-400 dark:text-gray-500 font-medium">{totalApiKey}</span></h2>
                 </header>
                 <div>
                     {/* Table */}
@@ -78,16 +81,16 @@ export default function ApiKeyPage() {
                             <thead className="text-xs font-semibold uppercase text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-900/20 border-t border-b border-gray-100 dark:border-gray-700/60">
                                 <tr>
                                     <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                                        <div className="font-semibold text-left">Name</div>
+                                        <div className="font-semibold text-left">{projectLang[language].name}</div>
                                     </th>
                                     <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                                        <div className="font-semibold text-left">Key</div>
+                                        <div className="font-semibold text-left">{projectLang[language].key}</div>
                                     </th>
                                     <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                                        <div className="font-semibold text-left">Status</div>
+                                        <div className="font-semibold text-left">{projectLang[language].status}</div>
                                     </th>
                                     <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                                        <div className="font-semibold text-left">Action</div>
+                                        <div className="font-semibold text-left">{projectLang[language].action}</div>
                                     </th>
                                 </tr>
                             </thead>

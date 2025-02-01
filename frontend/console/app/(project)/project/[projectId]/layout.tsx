@@ -3,6 +3,8 @@
 import Sidebar from '@/components/ui/sidebar'
 import Header from '@/components/ui/header'
 import { useParams } from 'next/navigation'
+import { useAppProvider } from '@/app/app-provider'
+import { projectLang } from '@/app/(project)/project/lang'
 
 export default function OrganizationLayout({
   children,
@@ -11,15 +13,16 @@ export default function OrganizationLayout({
 }) {
   const params = useParams();
   const projectId = params.projectId as string || "";
+  const { language } = useAppProvider();
 
   const projectLinks = [
     {
       type: 'groups',
-      title: 'Organization',
+      title: projectLang[language].organization,
       children: [
         {
           type: 'link',
-          title: 'Organizations',
+          title: projectLang[language].organizations,
           path: 'organizations',
           icon: (
             <svg className={`shrink-0 fill-current`} viewBox="0 0 1026 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="7526" width="16" height="16">
@@ -33,7 +36,7 @@ export default function OrganizationLayout({
     },
     {
       type: 'groups',
-      title: 'Project',
+      title: projectLang[language].project,
       children: [
         // {
         //   type: 'group',
@@ -53,7 +56,7 @@ export default function OrganizationLayout({
         // },
         {
           type: 'link',
-          title: 'API Key',
+          title: projectLang[language].apiKey,
           path: 'apikey',
           icon: (
             <svg className={`shrink-0 fill-current`} viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="7110" width="16" height="16"><path d="M111.37536 778.99264c-29.11744 29.07648-29.11744 76.39552 0 105.49248 29.09696 29.12256 76.416 29.12256 105.31328 0l21.02784-20.82304 87.70048 87.67488a38.06208 38.06208 0 0 0 54.05184 0l130.688-130.688a38.06208 38.06208 0 0 0 0-54.05696l-87.67488-87.67488 156.19584-156.39552c33.42336 17.26976 71.5264 27.02336 111.71328 27.02336 134.79936 0 244.0704-109.2608 244.0704-244.0704 0-134.79936-109.27104-244.0704-244.0704-244.0704-134.81984 0-244.0704 109.27104-244.0704 244.0704 0 40.18688 9.74848 78.2848 27.02336 111.7184l-361.96864 361.79968z m485.14048-473.51808c0-51.8144 42.05568-93.8752 93.8752-93.8752s93.8752 42.05568 93.8752 93.8752-42.0608 93.8752-93.8752 93.8752-93.8752-42.0608-93.8752-93.8752z" fill="currentColor"></path></svg>
@@ -62,7 +65,7 @@ export default function OrganizationLayout({
         },
         {
           type: 'link',
-          title: 'Settings',
+          title: projectLang[language].settings,
           path: 'settings',
           icon: (
             <svg className={`shrink-0 fill-current`} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
